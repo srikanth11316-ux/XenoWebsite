@@ -15,5 +15,11 @@ window.XENOCHAT_CONFIG = window.XENOCHAT_CONFIG || {};
     ? process.env.VITE_API_URL
     : null;
 
-  window.XENOCHAT_CONFIG.API_URL = envUrl || (isLocal ? 'http://localhost:3000' : 'https://xenochat-backend.onrender.com');
+  if (envUrl) {
+    window.XENOCHAT_CONFIG.API_URL = envUrl;
+  } else if (isLocal) {
+    window.XENOCHAT_CONFIG.API_URL = 'http://localhost:3000';
+  } else {
+    window.XENOCHAT_CONFIG.API_URL = 'https://xenochat-backend.onrender.com';
+  }
 })();

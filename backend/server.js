@@ -13,10 +13,10 @@ const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 const server = http.createServer(app);
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const FRONTEND_URL = process.env.FRONTEND_URL || '';
 const io = new Server(server, {
   cors: {
-    origin: FRONTEND_URL,
+    origin: FRONTEND_URL || '*',
     methods: ["GET", "POST"]
   }
 });
@@ -51,7 +51,7 @@ if (EMAIL_USER && EMAIL_PASS) {
 }
 
 app.use(cors({
-  origin: FRONTEND_URL,
+  origin: FRONTEND_URL || '*',
   credentials: true
 }));
 app.use(express.json());
