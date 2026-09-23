@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XenoChat - Connect & Hangout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0f0f;
+            height: 100vh;
+            overflow: hidden;
+            color: #e0e0e0;
+        }
+
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
+        }
+
+        .auth-box {
+            background: #1a1a1a;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #333;
+        }
+
+        .auth-box h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .auth-box h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #aaa;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #444;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background: #252525;
+            color: #e0e0e0;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .auth-switch a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .error {
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff6b6b;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .verification-section {
+            display: none;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+        }
+
+        .verification-section.active {
+            display: block;
+        }
+
+        .chat-container {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
+            background: #0f0f0f;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid #333;
+        }
+
+        .chat-header h2 {
+            font-size: 1.3rem;
+        }
+
+        .chat-header button {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid #444;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .chat-header button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #1a1a1a;
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .sidebar-header h3 {
+            margin-bottom: 10px;
+            color: #e0e0e0;
+        }
+
+        .sidebar-header input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: #252525;
+            color: #e0e0e0;
+        }
+
+        .sidebar-header input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .group-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #252525;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #333;
+        }
+
+        .group-item:hover {
+            background: #2d2d2d;
+        }
+
+        .group-item.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .group-item h4 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+            color: #e0e0e0;
+        }
+
+        .group-item p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            color: #aaa;
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0f0f0f;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: #252525;
+            color: #e0e0e0;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+        }
+
+        .message.sent .message-header {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .message.received .message-header {
+            color: #aaa;
+        }
+
+        .message-sender {
+            font-weight: 600;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        .message-content {
+            line-height: 1.5;
+        }
+
+        .message-file {
+            margin-top: 8px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .message.sent .message-file {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .message.received .message-file {
+            background: #2d2d2d;
+            color: #e0e0e0;
+        }
+
+        .chat-input-area {
+            background: #1a1a1a;
+            padding: 15px 20px;
+            border-top: 1px solid #333;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #444;
+            border-radius: 25px;
+            font-size: 1rem;
+            background: #252525;
+            color: #e0e0e0;
+        }
+
+        .chat-input-area input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .chat-input-area button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .chat-input-area button:hover {
+            transform: translateY(-2px);
+        }
+
+        .upload-btn {
+            background: #2d2d2d !important;
+            color: #e0e0e0 !important;
+            padding: 12px 16px !important;
+            border: 1px solid #444 !important;
+        }
+
+        .security-warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 20px;
+            font-size: 0.9rem;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid #333;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: #e0e0e0;
+        }
+
+        .modal .form-group {
+            margin-bottom: 15px;
+        }
+
+        .modal .btn {
+            margin-top: 10px;
+        }
+
+        .modal-close {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: absolute;
+                z-index: 50;
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .chat-main {
+                flex-direction: column;
+            }
+        }
+
+        .no-group-selected {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #666;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container" id="authContainer">
+        <div class="auth-box">
+            <h1>XenoChat</h1>
+            <h2 id="authTitle">Sign In</h2>
+            <div id="errorMessage"></div>
+            <form id="authForm">
+                <div class="form-group" id="usernameField">
+                    <label for="username">Username</label>
+                    <input type="text" id="username">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email">
+                </div>
+                <div class="form-group" id="phoneField">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" placeholder="+1234567890">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password">
+                </div>
+                <button type="submit" class="btn" id="authBtn">Sign In</button>
+            </form>
+
+            <div class="verification-section" id="verificationSection">
+                <h3 style="margin-bottom: 15px; color: #e0e0e0;">Verify Your Account</h3>
+                <p style="margin-bottom: 15px; color: #aaa; font-size: 0.9rem;">
+                    Enter the 6-digit verification code sent to your device.
+                </p>
+                <div class="form-group">
+                    <label for="verificationCode">Verification Code</label>
+                    <input type="text" id="verificationCode" maxlength="6" placeholder="123456">
+                </div>
+                <button type="button" class="btn" id="verifyBtn" style="margin-bottom: 10px;">Verify</button>
+                <button type="button" class="btn" id="resendBtn" style="background: #333; border: 1px solid #444;">Resend Code</button>
+            </div>
+            <div class="auth-switch">
+                <span id="authSwitchText">Don't have an account? </span>
+                <a id="authSwitchLink">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-header">
+                <h2>XenoChat</h2>
+                <div>
+                    <span id="currentUser"></span>
+                    <a href="users.html" target="_blank" style="color: white; text-decoration: none; margin-right: 10px; font-size: 0.9rem;">Users</a>
+                    <button onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+        <div class="chat-main">
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <h3>Groups</h3>
+                    <button class="btn" onclick="openCreateGroupModal()" style="margin-bottom: 10px;">+ Create Group</button>
+                    <input type="text" id="groupSearch" placeholder="Search groups..." oninput="filterGroups()">
+                </div>
+                <div class="sidebar-content" id="groupList"></div>
+            </div>
+
+            <div class="chat-area" id="chatArea">
+                <div class="no-group-selected" id="noGroupSelected">
+                    Select a group to start chatting
+                </div>
+
+                <div id="activeChat" style="display: none; flex-direction: column; height: 100%;">
+                    <div class="chat-header" id="chatHeader">
+                        <h3 id="currentGroupName"></h3>
+                    </div>
+                    <div class="security-warning" id="securityWarning">
+                        ⚠️ Security Notice: Dangerous files (.exe, .dll, .bat, .sh, etc.) are blocked. Only safe files are allowed.
+                    </div>
+                    <div class="chat-messages" id="chatMessages"></div>
+                    <div class="chat-input-area">
+                        <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
+                        <button class="btn upload-btn" onclick="document.getElementById('fileInput').click()">📎</button>
+                        <input type="text" id="messageInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+                        <button onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="createGroupModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('createGroupModal')">&times;</button>
+            <h2>Create New Group</h2>
+            <form id="createGroupForm">
+                <div class="form-group">
+                    <label for="groupName">Group Name</label>
+                    <input type="text" id="groupName" required>
+                </div>
+                <div class="form-group">
+                    <label for="groupDescription">Description</label>
+                    <input type="text" id="groupDescription">
+                </div>
+                <button type="submit" class="btn">Create Group</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="config.js"></script>
+    <script>
+        const API_URL = window.XENOCHAT_CONFIG.API_URL;
+        let socket = null;
+        let currentUser = null;
+        let currentGroup = null;
+        let groups = [];
+        let token = localStorage.getItem('token');
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.innerHTML = `<div class="error">${message}</div>`;
+        }
+
+        function clearError() {
+            document.getElementById('errorMessage').innerHTML = '';
+        }
+
+        async function apiCall(endpoint, options = {}) {
+            const body = options.body && typeof options.body === 'object' && !(options.body instanceof FormData)
+                ? JSON.stringify(options.body)
+                : options.body;
+
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                ...options,
+                body,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    ...options.headers
+                }
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Request failed');
+            }
+
+            return response.json();
+        }
+
+        function showAuth() {
+            document.getElementById('authContainer').style.display = 'flex';
+            document.getElementById('chatContainer').style.display = 'none';
+        }
+
+        function showChat() {
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('chatContainer').style.display = 'flex';
+        }
+
+        async function handleAuth(e) {
+            e.preventDefault();
+            clearError();
+
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const isRegister = document.getElementById('authTitle').textContent === 'Sign Up';
+
+            if (isRegister) {
+                if (!username || !email || !password) {
+                    showError('Please fill in all required fields');
+                    return;
+                }
+            } else {
+                if (!username || !password) {
+                    showError('Please enter username and password');
+                    return;
+                }
+            }
+
+            try {
+                const endpoint = isRegister ? '/api/register' : '/api/login';
+                const body = isRegister ? { username, email, password, phone } : { username, password };
+
+                const response = await fetch(`${API_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    if (data.needsVerification) {
+                        showVerification(username);
+                        return;
+                    }
+                    throw new Error(data.error);
+                }
+
+                if (isRegister) {
+                    showVerification(username, data.verificationCode);
+                    return;
+                }
+
+                token = data.token;
+                currentUser = data.user;
+                localStorage.setItem('token', token);
+
+                initSocket();
+                showChat();
+                loadGroups();
+                document.getElementById('currentUser').textContent = `@${currentUser.username}`;
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        function showVerification(username, code) {
+            document.getElementById('authForm').style.display = 'none';
+            document.getElementById('authSwitchText').style.display = 'none';
+            document.getElementById('authSwitchLink').style.display = 'none';
+            document.getElementById('verificationSection').classList.add('active');
+            document.getElementById('verificationSection').dataset.username = username;
+            if (code) {
+                alert(`Your verification code is: ${code}`);
+            } else {
+                alert('A verification code has been sent to your email.');
+            }
+        }
+
+        async function verifyAccount() {
+            const username = document.getElementById('verificationSection').dataset.username;
+            const code = document.getElementById('verificationCode').value.trim();
+
+            if (!code || code.length !== 6) {
+                showError('Please enter the 6-digit verification code');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, code })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error);
+                }
+
+                token = data.token;
+                currentUser = data.user;
+                localStorage.setItem('token', token);
+
+                document.getElementById('verificationSection').classList.remove('active');
+                document.getElementById('authForm').style.display = 'block';
+                document.getElementById('authSwitchText').style.display = 'inline';
+                document.getElementById('authSwitchLink').style.display = 'inline';
+
+                initSocket();
+                showChat();
+                loadGroups();
+                document.getElementById('currentUser').textContent = `@${currentUser.username}`;
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        async function resendCode() {
+            const username = document.getElementById('verificationSection').dataset.username;
+
+            try {
+                const response = await fetch(`${API_URL}/api/resend-code`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error);
+                }
+
+                if (data.verificationCode) {
+                    alert(`New verification code: ${data.verificationCode}`);
+                } else {
+                    alert('A new verification code has been sent to your email.');
+                }
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        function toggleAuthMode() {
+            const isRegister = document.getElementById('authTitle').textContent === 'Sign Up';
+            document.getElementById('authTitle').textContent = isRegister ? 'Sign In' : 'Sign Up';
+            document.getElementById('authBtn').textContent = isRegister ? 'Sign In' : 'Sign Up';
+            document.getElementById('authSwitchText').textContent = isRegister ? "Don't have an account? " : "Already have an account? ";
+            document.getElementById('authSwitchLink').textContent = isRegister ? 'Sign Up' : 'Sign In';
+            document.getElementById('usernameField').style.display = isRegister ? 'block' : 'none';
+            document.getElementById('phoneField').style.display = isRegister ? 'block' : 'none';
+        }
+
+        function initSocket() {
+            socket = io(API_URL, {
+                auth: { token }
+            });
+
+            socket.on('connect', () => {
+                console.log('Connected to chat');
+            });
+
+            socket.on('new_message', (message) => {
+                if (currentGroup && message.group_id === currentGroup.id) {
+                    displayMessage(message);
+                }
+            });
+
+            socket.on('connect_error', (err) => {
+                showError('Connection error: ' + err.message);
+            });
+        }
+
+        async function loadGroups() {
+            try {
+                const data = await apiCall('/api/groups');
+                groups = [...data.public_groups, ...data.user_groups];
+                renderGroups();
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        function renderGroups(filterText = '') {
+            const groupList = document.getElementById('groupList');
+            const filtered = groups.filter(g =>
+                g.name.toLowerCase().includes(filterText.toLowerCase())
+            );
+
+            groupList.innerHTML = filtered.map(group => `
+                <div class="group-item ${currentGroup?.id === group.id ? 'active' : ''}"
+                     onclick="selectGroup(${group.id})">
+                    <h4>${group.name}</h4>
+                    <p>${group.member_count} members</p>
+                </div>
+            `).join('');
+        }
+
+        function filterGroups() {
+            const searchText = document.getElementById('groupSearch').value;
+            renderGroups(searchText);
+        }
+
+        async function selectGroup(groupId) {
+            const group = groups.find(g => g.id === groupId);
+            if (!group) return;
+
+            currentGroup = group;
+
+            if (!group.is_member) {
+                try {
+                    await apiCall(`/api/groups/${groupId}/join`, { method: 'POST' });
+                    await loadGroups();
+                } catch (err) {
+                    showError(err.message);
+                    return;
+                }
+            }
+
+            if (socket) {
+                socket.emit('join_group', groupId);
+            }
+
+            document.getElementById('noGroupSelected').style.display = 'none';
+            document.getElementById('activeChat').style.display = 'flex';
+            document.getElementById('currentGroupName').textContent = group.name;
+
+            renderGroups(document.getElementById('groupSearch').value);
+            await loadMessages();
+        }
+
+        async function loadMessages() {
+            if (!currentGroup) return;
+
+            try {
+                const messages = await apiCall(`/api/groups/${currentGroup.id}/messages`);
+                const chatMessages = document.getElementById('chatMessages');
+                chatMessages.innerHTML = '';
+                messages.forEach(displayMessage);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        function displayMessage(message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const isSent = message.sender_id === currentUser.id;
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+
+            let fileHtml = '';
+            if (message.file_url) {
+                fileHtml = `<a href="${API_URL}${message.file_url}" class="message-file" download>
+                    📎 ${message.file_type || 'File'} (${formatFileSize(message.file_size)})
+                </a>`;
+            }
+
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    <span class="message-sender">${message.sender_name}</span>
+                    <span class="message-time">${formatTime(message.created_at)}</span>
+                </div>
+                <div class="message-content">
+                    ${message.content ? `<div>${escapeHtml(message.content)}</div>` : ''}
+                    ${fileHtml}
+                </div>
+            `;
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const content = input.value.trim();
+
+            if (!content || !currentGroup) return;
+
+            if (socket) {
+                socket.emit('send_message', {
+                    group_id: currentGroup.id,
+                    content: content
+                });
+            }
+
+            input.value = '';
+        }
+
+        async function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file || !currentGroup) return;
+
+            const allowedTypes = [
+                'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+                'application/pdf',
+                'application/zip', 'application/x-rar-compressed',
+                'text/plain', 'text/csv',
+                'video/mp4', 'video/webm'
+            ];
+
+            const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf', '.zip', '.rar', '.txt', '.csv', '.mp4', '.webm'];
+            const fileExt = path.extname(file.name).toLowerCase();
+
+            if (!allowedExtensions.includes(fileExt) && !allowedTypes.includes(file.mimetype)) {
+                alert('This file type is blocked for security. Only images, PDFs, videos, and archives are allowed.');
+                event.target.value = '';
+                return;
+            }
+
+            if (file.size > 50 * 1024 * 1024) {
+                alert('File size must be less than 50MB');
+                event.target.value = '';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch(`${API_URL}/api/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error);
+                }
+
+                if (socket) {
+                    socket.emit('send_message', {
+                        group_id: currentGroup.id,
+                        file_url: data.url,
+                        file_type: data.mimetype,
+                        file_size: data.size
+                    });
+                }
+            } catch (err) {
+                alert('Upload failed: ' + err.message);
+            }
+
+            event.target.value = '';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function openCreateGroupModal() {
+            document.getElementById('createGroupModal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        async function createGroup(e) {
+            e.preventDefault();
+            const name = document.getElementById('groupName').value;
+            const description = document.getElementById('groupDescription').value;
+
+            try {
+                await apiCall('/api/groups', {
+                    method: 'POST',
+                    body: { name, description }
+                });
+
+                closeModal('createGroupModal');
+                document.getElementById('createGroupForm').reset();
+                await loadGroups();
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            token = null;
+            currentUser = null;
+            currentGroup = null;
+            if (socket) {
+                socket.disconnect();
+                socket = null;
+            }
+            showAuth();
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            if (days < 7) return `${days}d ago`;
+
+            return date.toLocaleDateString();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.getElementById('authForm').addEventListener('submit', handleAuth);
+        document.getElementById('authSwitchLink').addEventListener('click', toggleAuthMode);
+        document.getElementById('createGroupForm').addEventListener('submit', createGroup);
+        document.getElementById('verifyBtn').addEventListener('click', verifyAccount);
+        document.getElementById('resendBtn').addEventListener('click', resendCode);
+
+        if (token) {
+            initSocket();
+            showChat();
+            loadGroups();
+        }
+    </script>
+</body>
+</html>

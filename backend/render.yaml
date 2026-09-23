@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: xenochat-backend
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: EMAIL_SERVICE
+        value: gmail
+      - key: DATA_DIR
+        value: /opt/render/project/src/data
+    disk:
+      name: xenochat-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1
