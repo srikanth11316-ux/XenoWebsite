@@ -1,3 +1,3 @@
 window.XENOCHAT_CONFIG = {
-  API_URL: 'https://your-backend-url.onrender.com'
+  API_URL: 'https://xenochat-backend.onrender.com'
 };
