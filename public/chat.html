@@ -645,14 +645,25 @@
             const phone = document.getElementById('phone').value.trim();
             const isRegister = document.getElementById('authTitle').textContent === 'Sign Up';
 
+            console.log('AUTH_FIELDS', { username, email, password, phone, isRegister });
+
             if (isRegister) {
-                if (!username || !email || !password) {
-                    showError('Please fill in all required fields');
+                const missing = [];
+                if (!username) missing.push('username');
+                if (!email) missing.push('email');
+                if (!password) missing.push('password');
+
+                if (missing.length > 0) {
+                    showError(`Missing: ${missing.join(', ')}`);
                     return;
                 }
             } else {
-                if (!username || !password) {
-                    showError('Please enter username and password');
+                const missing = [];
+                if (!username) missing.push('username');
+                if (!password) missing.push('password');
+
+                if (missing.length > 0) {
+                    showError(`Missing: ${missing.join(', ')}`);
                     return;
                 }
             }
