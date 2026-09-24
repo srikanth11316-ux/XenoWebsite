@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.exe
+*.msi
+*.nupkg
+*.deb
+*.rpm
+*.yml.bak
