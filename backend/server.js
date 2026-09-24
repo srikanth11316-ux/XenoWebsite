@@ -211,13 +211,13 @@ app.post('/api/register', async (req, res) => {
     const existingEmail = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
 
     if (existingUsername && existingEmail) {
-      return res.status(400).json({ error: 'Both username and email already exist' });
+      return res.status(400).json({ error: 'Username and email already exist', field: 'both' });
     }
     if (existingUsername) {
-      return res.status(400).json({ error: 'Username already exists', field: 'username' });
+      return res.status(400).json({ error: 'Username already exists. Please choose a different username.', field: 'username' });
     }
     if (existingEmail) {
-      return res.status(400).json({ error: 'Email already exists', field: 'email' });
+      return res.status(400).json({ error: 'Email already exists. Please use a different email or Sign In.', field: 'email' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
