@@ -20,6 +20,6 @@ window.XENOCHAT_CONFIG = window.XENOCHAT_CONFIG || {};
   } else if (isLocal) {
     window.XENOCHAT_CONFIG.API_URL = 'http://localhost:3000';
   } else {
-    window.XENOCHAT_CONFIG.API_URL = 'https://xenochat-backend.onrender.com';
+    window.XENOCHAT_CONFIG.API_URL = 'https://xenowebsite.onrender.com';
   }
 })();
