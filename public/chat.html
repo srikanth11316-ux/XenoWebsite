@@ -480,14 +480,14 @@
     <div class="auth-container" id="authContainer">
         <div class="auth-box">
             <h1>XenoChat</h1>
-            <h2 id="authTitle">Sign In</h2>
+            <h2 id="authTitle">Sign Up</h2>
             <div id="errorMessage"></div>
             <form id="authForm">
                 <div class="form-group" id="usernameField">
                     <label for="username">Username</label>
                     <input type="text" id="username">
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="emailField">
                     <label for="email">Email</label>
                     <input type="email" id="email">
                 </div>
@@ -499,7 +499,7 @@
                     <label for="password">Password</label>
                     <input type="password" id="password">
                 </div>
-                <button type="submit" class="btn" id="authBtn">Sign In</button>
+                <button type="submit" class="btn" id="authBtn">Sign Up</button>
             </form>
 
             <div class="verification-section" id="verificationSection">
@@ -800,7 +800,7 @@
             document.getElementById('authBtn').textContent = isRegister ? 'Sign In' : 'Sign Up';
             document.getElementById('authSwitchText').textContent = isRegister ? "Don't have an account? " : "Already have an account? ";
             document.getElementById('authSwitchLink').textContent = isRegister ? 'Sign Up' : 'Sign In';
-            document.getElementById('usernameField').style.display = isRegister ? 'block' : 'none';
+            document.getElementById('emailField').style.display = isRegister ? 'block' : 'none';
             document.getElementById('phoneField').style.display = isRegister ? 'block' : 'none';
         }
 
