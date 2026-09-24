@@ -504,6 +504,7 @@
 
             <div class="verification-section" id="verificationSection">
                 <h3 style="margin-bottom: 15px; color: #e0e0e0;">Verify Your Account</h3>
+                <div id="verificationInfo" style="display: none; margin-bottom: 15px; padding: 10px; background: rgba(102, 126, 234, 0.2); border-radius: 8px; color: #667eea; font-size: 0.9rem;"></div>
                 <p style="margin-bottom: 15px; color: #aaa; font-size: 0.9rem;">
                     Enter the 6-digit verification code sent to your device.
                 </p>
@@ -726,10 +727,13 @@
             document.getElementById('authSwitchLink').style.display = 'none';
             document.getElementById('verificationSection').classList.add('active');
             document.getElementById('verificationSection').dataset.username = username;
+            const infoText = document.getElementById('verificationInfo');
             if (code) {
-                alert(`Your verification code is: ${code}`);
+              infoText.textContent = 'Your verification code is: ' + code;
+              infoText.style.display = 'block';
             } else {
-                alert('A verification code has been sent to your email.');
+              infoText.textContent = 'A verification code has been sent to your email.';
+              infoText.style.display = 'block';
             }
         }
 
@@ -790,7 +794,9 @@
                 }
 
                 if (data.verificationCode) {
-                    alert(`New verification code: ${data.verificationCode}`);
+                    const infoText = document.getElementById('verificationInfo');
+                    infoText.textContent = 'New verification code: ' + data.verificationCode;
+                    infoText.style.display = 'block';
                 } else {
                     alert('A new verification code has been sent to your email.');
                 }

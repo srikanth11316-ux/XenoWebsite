@@ -235,6 +235,15 @@ app.post('/api/register', async (req, res) => {
       verificationCode: transporter ? undefined : verificationCode
     });
   } catch (err) {
+    if (err.code === 'SQLITE_CONSTRAINT') {
+      if (err.message.includes('users.email')) {
+        return res.status(400).json({ error: 'Email already exists', field: 'email' });
+      }
+      if (err.message.includes('users.username')) {
+        return res.status(400).json({ error: 'Username already exists', field: 'username' });
+      }
+    }
+    console.error('Registration error:', err);
     res.status(500).json({ error: 'Registration failed' });
   }
 });
