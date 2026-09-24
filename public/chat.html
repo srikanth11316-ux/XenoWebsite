@@ -477,13 +477,6 @@
     </style>
 </head>
     <body>
-    <div id="api-debug" style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); color: #fff; padding: 6px 10px; border-radius: 8px; font-size: 12px; z-index: 9999; font-family: monospace;"></div>
-    <script>
-      (function() {
-        var el = document.getElementById('api-debug');
-        if (el) el.textContent = 'API: ' + ((window.XENOCHAT_CONFIG && window.XENOCHAT_CONFIG.API_URL) || 'NOT SET');
-      })();
-    </script>
     <div class="auth-container" id="authContainer">
         <div class="auth-box">
             <h1>XenoChat</h1>
@@ -602,6 +595,12 @@
             }
         })();
         const API_URL = (window.XENOCHAT_CONFIG && window.XENOCHAT_CONFIG.API_URL) || 'https://xenowebsite.onrender.com';
+        const apiDebug = document.createElement('div');
+        apiDebug.id = 'api-debug';
+        apiDebug.style = 'position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); color: #fff; padding: 6px 10px; border-radius: 8px; font-size: 12px; z-index: 9999; font-family: monospace;';
+        apiDebug.textContent = 'API: ' + API_URL;
+        document.body.appendChild(apiDebug);
+
         let socket = null;
         let currentUser = null;
         let currentGroup = null;
