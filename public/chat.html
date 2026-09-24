@@ -588,9 +588,8 @@
     <script>
         (function() {
             const host = window.location.hostname;
-            const isLive = host.includes('pages.dev') || host.includes('onrender.com');
-            const current = (window.XENOCHAT_CONFIG && window.XENOCHAT_CONFIG.API_URL) || '';
-            if (isLive && current.includes('localhost')) {
+            const isLocal = host === 'localhost' || host === '127.0.0.1' || host === '';
+            if (!isLocal) {
                 window.XENOCHAT_CONFIG = window.XENOCHAT_CONFIG || {};
                 window.XENOCHAT_CONFIG.API_URL = 'https://xenowebsite.onrender.com';
             }
