@@ -586,7 +586,16 @@
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="config.js"></script>
     <script>
-        const API_URL = window.XENOCHAT_CONFIG.API_URL;
+        (function() {
+            const host = window.location.hostname;
+            const isLive = host.includes('pages.dev') || host.includes('onrender.com');
+            const current = (window.XENOCHAT_CONFIG && window.XENOCHAT_CONFIG.API_URL) || '';
+            if (isLive && current.includes('localhost')) {
+                window.XENOCHAT_CONFIG = window.XENOCHAT_CONFIG || {};
+                window.XENOCHAT_CONFIG.API_URL = 'https://xenowebsite.onrender.com';
+            }
+        })();
+        const API_URL = (window.XENOCHAT_CONFIG && window.XENOCHAT_CONFIG.API_URL) || 'https://xenowebsite.onrender.com';
         let socket = null;
         let currentUser = null;
         let currentGroup = null;
