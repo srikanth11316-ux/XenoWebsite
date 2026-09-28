@@ -489,7 +489,7 @@
                 </div>
                 <div class="form-group" id="emailField">
                     <label for="email">Email</label>
-                    <input type="email" id="email">
+                    <input type="email" id="email" placeholder="or use username above">
                 </div>
                 <div class="form-group" id="phoneField">
                     <label for="phone">Phone Number</label>
@@ -674,7 +674,7 @@
                 }
             } else {
                 const missing = [];
-                if (!username) missing.push('username');
+                if (!username && !email) missing.push('username or email');
                 if (!password) missing.push('password');
 
                 if (missing.length > 0) {
@@ -685,7 +685,7 @@
 
             try {
                 const endpoint = isRegister ? '/api/register' : '/api/login';
-                const body = isRegister ? { username, email, password, phone } : { username, password };
+                const body = isRegister ? { username, email, password, phone } : { username, email, password };
 
                 const response = await fetch(`${API_URL}${endpoint}`, {
                     method: 'POST',
@@ -697,7 +697,7 @@
 
                 if (!response.ok) {
                     if (data.needsVerification) {
-                        showVerification(username);
+                        showVerification(data.username || username, data.verificationCode);
                         return;
                     }
                     throw new Error(data.error);
@@ -811,8 +811,10 @@
             document.getElementById('authBtn').textContent = isRegister ? 'Sign In' : 'Sign Up';
             document.getElementById('authSwitchText').textContent = isRegister ? "Don't have an account? " : "Already have an account? ";
             document.getElementById('authSwitchLink').textContent = isRegister ? 'Sign Up' : 'Sign In';
-            document.getElementById('emailField').style.display = isRegister ? 'block' : 'none';
+            document.getElementById('emailField').style.display = isRegister ? 'block' : 'block';
             document.getElementById('phoneField').style.display = isRegister ? 'block' : 'none';
+            // Update username label for login mode
+            document.querySelector('label[for="username"]').textContent = isRegister ? 'Username' : 'Username or Email';
         }
 
         function initSocket() {

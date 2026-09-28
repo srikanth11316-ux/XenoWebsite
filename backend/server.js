@@ -317,8 +317,10 @@ app.post('/api/resend-code', async (req, res) => {
 
 app.post('/api/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+    const { username, password, email } = req.body;
+    // Allow login by username OR email
+    const loginKey = username || email;
+    const user = db.prepare('SELECT * FROM users WHERE username = ? OR email = ?').get(loginKey, loginKey);
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -330,7 +332,12 @@ app.post('/api/login', async (req, res) => {
     }
 
     if (!user.is_verified) {
-      return res.status(403).json({ error: 'Please verify your account first', needsVerification: true, username });
+      return res.status(403).json({ 
+        error: 'Please verify your account first', 
+        needsVerification: true, 
+        username: user.username,
+        verificationCode: user.verification_code || undefined
+      });
     }
 
     const token = jwt.sign(
