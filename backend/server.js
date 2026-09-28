@@ -224,7 +224,7 @@ app.post('/api/register', async (req, res) => {
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     const result = db.prepare(
-      'INSERT INTO users (username, email, password, phone, verification_code, is_verified) VALUES (?, ?, ?, ?, ?, 0)'
+      'INSERT INTO users (username, email, password, phone, verification_code, is_verified) VALUES (?, ?, ?, ?, ?, 1)'
     ).run(username, email, hashedPassword, phone || null, verificationCode);
 
     await sendVerificationEmail(email, username, verificationCode);
@@ -331,15 +331,7 @@ app.post('/api/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    if (!user.is_verified) {
-      return res.status(403).json({ 
-        error: 'Please verify your account first', 
-        needsVerification: true, 
-        username: user.username,
-        verificationCode: user.verification_code || undefined
-      });
-    }
-
+    // Verification is temporarily disabled - login allowed for unverified users
     const token = jwt.sign(
       { id: user.id, username: user.username, email: user.email },
       JWT_SECRET,

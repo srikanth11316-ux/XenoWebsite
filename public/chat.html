@@ -704,7 +704,13 @@
                 }
 
                 if (isRegister) {
-                    showVerification(username, data.verificationCode);
+                    // Registration successful - auto-redirect to login
+                    alert('Account created successfully! Please log in.');
+                    document.getElementById('authTitle').textContent = 'Sign In';
+                    document.getElementById('authBtn').textContent = 'Sign In';
+                    document.getElementById('authSwitchText').textContent = "Already have an account? ";
+                    document.getElementById('authSwitchLink').textContent = 'Sign In';
+                    document.getElementById('authForm').reset();
                     return;
                 }
 
